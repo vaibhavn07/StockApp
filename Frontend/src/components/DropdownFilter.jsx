@@ -2,11 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import Transition from '../utils/Transition';
 
 function DropdownFilter({
-  align
+  align, data
 }) {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
+  const filter = useRef(null);
+  const price = useRef(null);
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
@@ -30,6 +31,23 @@ function DropdownFilter({
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
   });
+  const apply = () => {
+    setDropdownOpen(false);
+    if (price.current.checked == true) {
+      data.sort();
+    }
+    if (filter.current.checked == true) {
+      data.sort();
+    }
+  }
+  const clear = () => {
+    if (filter.current.checked == true) {
+      filter.current.checked = false;
+    }
+    if (price.current.checked == true) {
+      price.current.checked = false;
+    }
+  }
 
   return (
     <div className="relative inline-flex">
@@ -49,9 +67,8 @@ function DropdownFilter({
       <Transition
         show={dropdownOpen}
         tag="div"
-        className={`origin-top-right z-10 absolute top-full left-0 right-auto min-w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pt-1.5 rounded shadow-lg overflow-hidden mt-1 ${
-          align === 'right' ? 'md:left-auto md:right-0' : 'md:left-0 md:right-auto'
-        }`}
+        className={`origin-top-right z-10 absolute top-full left-0 right-auto min-w-56 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 pt-1.5 rounded shadow-lg overflow-hidden mt-1 ${align === 'right' ? 'md:left-auto md:right-0' : 'md:left-0 md:right-auto'
+          }`}
         enter="transition ease-out duration-200 transform"
         enterStart="opacity-0 -translate-y-2"
         enterEnd="opacity-100 translate-y-0"
@@ -64,52 +81,28 @@ function DropdownFilter({
           <ul className="mb-4">
             <li className="py-1 px-3">
               <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Direct VS Indirect</span>
+                <input ref={price} type="checkbox" className="form-checkbox" />
+                <span className="text-sm font-medium ml-2">Price - Low to High</span>
               </label>
             </li>
             <li className="py-1 px-3">
               <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Real Time Value</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Top Channels</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Sales VS Refunds</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Last Order</span>
-              </label>
-            </li>
-            <li className="py-1 px-3">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox" />
-                <span className="text-sm font-medium ml-2">Total Spent</span>
+                <input ref={filter} type="checkbox" className="form-checkbox" />
+                <span className="text-sm font-medium ml-2">Names</span>
               </label>
             </li>
           </ul>
           <div className="py-2 px-3 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/20">
             <ul className="flex items-center justify-between">
               <li>
-                <button className="btn-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-200">
+                <button onClick={clear} className="btn-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-500 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-200">
                   Clear
                 </button>
               </li>
               <li>
                 <button
                   className="btn-xs bg-indigo-500 hover:bg-indigo-600 text-white"
-                  onClick={() => setDropdownOpen(false)}
+                  onClick={apply}
                   onBlur={() => setDropdownOpen(false)}
                 >
                   Apply

@@ -75,17 +75,39 @@ for (let key in jsonData["Monthly Time Series"]) {
   };
 
   const removeItem =async (e) => {
-    const res = await axios.post(`http://localhost:3000/api/v1/user/deletestock:${e.target.id}`);
+    const token = localStorage.getItem('auth-token');
+    const res = await axios.get(`http://localhost:3000/api/v1/user/deletestock:${e.target.id}`,{
+      headers : {
+        'auth-token':token
+    }
+    });
     console.log(res.data)
+    alert(res.data);
   }
   const addItem = async (e) => {
-    if(localStorage.getItem('auth-token')){
-      const res = await axios.post( `http://localhost:3000/api/v1/user/deletestock:${e.target.id}`);
-      console.log(res.data);
-    }
-    else{
-      navigate('/home');
-    }
+try{   
+      const token = localStorage.getItem('auth-token');
+      // const res = await axios.post(`http://localhost:3000/api/v1/user/addstock:${e.target.id}`,{
+      //   headers : {
+      //     'auth-token':token
+      //   }
+      // });
+    const res = await fetch(`http://localhost:3000/api/v1/user/addstock:${e.target.id}`, {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+          'auth-token':token
+}});
+      const data = await res.json()
+      console.log(data);
+      alert(data.toUpperCase())
+}
+catch(e){
+
+  navigate('/home');
+}
+
+    
   }
 
   return (
@@ -95,9 +117,8 @@ for (let key in jsonData["Monthly Time Series"]) {
           {/* Icon */}
           <img src={Icon} width="32" height="32" alt="Icon 01" />
           {/* Menu button */}
-          <EditMenu align="right" className="relative inline-flex">
-         
-            <li>
+          <EditMenu align="right" className="relative inline-flex" >
+              <li>
               {location.pathname=='/home' && 
               <div className="font-medium text-sm text-rose-500 hover:text-rose-600 flex py-1 px-3 cursor-pointer" id={props.id} onClick={removeItem} >
                 Remove

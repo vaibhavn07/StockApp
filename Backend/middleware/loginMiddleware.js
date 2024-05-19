@@ -1,17 +1,20 @@
 const jwt = require('jsonwebtoken');
-function loginMiddleware (req,res,next){
-    const token = req.get('auth-token')
+require('dotenv').config();
+const JWT_KEY = 'vaibhavn2007@gmail.com'
+async function loginMiddleware (req,res,next){
+    const token = req.header('auth-token')
     if (!token) {
         res.status(401).send({ error: "Please authenticate using a valid token" })
     }
     try {
-        const data = jwt.verify(token,process.env.JWT_KEY)
+        const data =await jwt.verify(token,JWT_KEY);
         req.user = data.user;
-        
         next();
 
-    } catch (error) {
-        res.status(401).send({ error: "Please authenticate using a valid token" })
+    } catch (e) {
+        // return res.status(401).json({ error: "Please authenticate using a valid token" })
+        console.log('error',e);
+        // return res.json("error");
     }
 }
 module.exports = loginMiddleware;
